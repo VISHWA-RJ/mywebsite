@@ -3,359 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Small-World Network Simulation</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        h1 {
-            font-weight: 300;
-            margin-top: 20px;
-            color: #ffffff;
-            text-align: center;
-        }
-
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 15px 25px;
-            background-color: #1e1e1e;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            margin-bottom: 20px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        label {
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: #a0a0a0;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 150px;
-            height: 5px;
-            background: #444;
-            border-radius: 5px;
-            outline: none;
-            opacity: 0.8;
-            transition: opacity .2s;
-        }
-
-        input[type="range"]:hover {
-            opacity: 1;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #03a9f4;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #1e1e1e;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            background: #03a9f4;
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid #1e1e1e;
-        }
-
-        span {
-            font-weight: 500;
-            color: #03a9f4;
-            min-width: 30px;
-            text-align: center;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        button {
-            background-color: #03a9f4;
-            color: #ffffff;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button:hover {
-            background-color: #0288d1;
-        }
-
-        #reset-cascade {
-            background-color: #555;
-        }
-        #reset-cascade:hover {
-            background-color: #777;
-        }
-
-        #graph-container {
-            width: 95%;
-            height: 80%;
-            background-color: #181818;
-            border-radius: 12px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+    
+    <meta name="description" content="Portfolio of EREN, an Electronics and Communication Engineering student specializing in distributed AGI systems.">
+    <meta name="keywords" content="AGI, Artificial General Intelligence, EREN, Electronics, Communication Engineering, Portfolio, Mind Uploading">
+    
+    <title>EREN | AGI Systems Portfolio</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
 </head>
 <body>
 
-    <div class="container">
-        <h1>Small-World Network & Information Cascade</h1>
-        <div class="controls">
-            <div class="control-group">
-                <label for="nodes">Number of Nodes</label>
-                <input type="range" id="nodes" name="nodes" min="20" max="300" value="100">
-                <span id="nodes-value">100</span>
+    <header class="header">
+        <nav class="navbar">
+            <a href="#hero" class="nav-logo">EREN.</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="#skills" class="nav-link">Skills</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Hello, I'm EREN</h1>
+                <p class="subtitle">Building Distributed AGI Systems</p>
+                <p class="description">
+                    A final-year Electronics and Communication Engineering student focused on designing modular, scalable intelligence systems and researching mind-uploading technologies.
+                </p>
+                <a href="#projects" class="btn">View My Work</a>
             </div>
-            <div class="control-group">
-                <label for="neighbors">Neighbors (k)</label>
-                <input type="range" id="neighbors" name="neighbors" min="2" max="14" value="4" step="2">
-                <span id="neighbors-value">4</span>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="container">
+                <h2>About Me</h2>
+                <div class="about-content">
+                    <img src="path/to/your-photo.jpg" alt="EREN" class="profile-photo">
+                    <div class="about-text">
+                        <p>
+                            I am a B.Tech student at Arasu Engineering College, driven by the goal of engineering true, domain-general artificial intelligence. My philosophy centers on creating AGI as a distributed system of intelligent 'cells', where global coordination gives rise to emergent intelligence, rather than mimicking human consciousness.
+                        </p>
+                        <p>
+                            My academic background in Electronics and Communication Engineering provides a strong foundation in hardware, signal processing, and system design, which I apply to my primary research interest: building a functional distributed AGI and establishing a research center for mind uploading technologies.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="control-group">
-                <label for="beta">Rewiring Probability (β)</label>
-                <input type="range" id="beta" name="beta" min="0" max="1" value="0.05" step="0.01">
-                <span id="beta-value">0.05</span>
+        </section>
+
+        <section id="projects" class="projects-section">
+            <div class="container">
+                <h2>My Projects</h2>
+                <div class="projects-grid">
+                    
+                    <div class="project-card">
+                        <img src="path/to/project1-image.jpg" alt="Project 1 Thumbnail">
+                        <h3>Project Title 1: Distributed Cell Simulation</h3>
+                        <p>A simulation environment for testing the interaction of distributed AGI 'cells' in a small-world graph topology. Focused on emergent problem-solving behaviors.</p>
+                        <div class="project-links">
+                            <a href="#" target="_blank">Live Demo</a>
+                            <a href="#" target="_blank">Source Code</a>
+                        </div>
+                    </div>
+                    
+                    <div class="project-card">
+                        <img src="path/to/project2-image.jpg" alt="Project 2 Thumbnail">
+                        <h3>Project Title 2: Real-Time Prediction Engine</h3>
+                        <p>Implementation of a core prediction and simulation engine module for an AGI cell, capable of modeling dynamic environments from streaming sensor data.</p>
+                        <div class="project-links">
+                            <a href="#" target="_blank">Live Demo</a>
+                            <a href="#" target="_blank">Source Code</a>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <img src="path/to/project3-image.jpg" alt="Project 3 Thumbnail">
+                        <h3>Project Title 3: Domain-General Learning Model</h3>
+                        <p>A proof-of-concept learning mechanism designed for domain-general application, contrasting with traditional task-specific machine learning models.</p>
+                        <div class="project-links">
+                            <a href="#" target="_blank">Live Demo</a>
+                            <a href="#" target="_blank">Source Code</a>
+                        </div>
+                    </div>
+                    
+                    </div>
             </div>
-            <button id="start-cascade">Start Information Cascade</button>
-            <button id="reset-cascade">Reset</button>
-        </div>
-        <div id="graph-container"></div>
-    </div>
+        </section>
 
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script>
-        // --- UI & STATE ---
-        const nodesSlider = document.getElementById('nodes');
-        const neighborsSlider = document.getElementById('neighbors');
-        const betaSlider = document.getElementById('beta');
-        const startButton = document.getElementById('start-cascade');
-        const resetButton = document.getElementById('reset-cascade');
-        let cascadeTimer = null; // To hold the interval timer
+        <section id="skills" class="skills-section">
+            <div class="container">
+                <h2>Technical Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Languages</h3>
+                        <ul>
+                            <li>Python</li>
+                            <li>C++</li>
+                            <li>Verilog/VHDL</li>
+                            <li>JavaScript</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Frameworks & Tools</h3>
+                        <ul>
+                            <li>TensorFlow / PyTorch</li>
+                            <li>MATLAB</li>
+                            <li>Git & GitHub</li>
+                            <li>Docker</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>AGI & Core Concepts</h3>
+                        <ul>
+                            <li>Distributed Systems</li>
+                            <li>Graph Theory</li>
+                            <li>Control Systems</li>
+                            <li>Reinforcement Learning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        // --- D3 SIMULATION SETUP ---
-        const container = document.getElementById('graph-container');
-        const width = container.clientWidth;
-        const height = container.clientHeight;
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2>Get In Touch</h2>
+                <p>I'm always open to discussing new projects, research ideas, or collaboration opportunities. Feel free to reach out.</p>
+                <form action="your-form-handler-url" method="POST" class="contact-form">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+                <div class="social-links">
+                    <a href="#" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" target="_blank"><i class="fas fa-globe"></i></a> </div>
+            </div>
+        </section>
+    </main>
 
-        const svg = d3.select("#graph-container").append("svg")
-            .attr("width", width)
-            .attr("height", height);
+    <footer class="footer">
+        <p>&copy; 2025 EREN. All Rights Reserved.</p>
+    </footer>
 
-        let link = svg.append("g").attr("class", "links").selectAll("line");
-        let node = svg.append("g").attr("class", "nodes").selectAll("circle");
-        let currentGraphData = {};
-
-        const simulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(d => d.id).distance(40).strength(0.4))
-            .force("charge", d3.forceManyBody().strength(-120))
-            .force("center", d3.forceCenter(width / 2, height / 2))
-            .on("tick", ticked);
-
-        // --- WATTS-STROGATZ MODEL GENERATOR ---
-        function generateSmallWorldData(numNodes, k, beta) {
-            const nodes = d3.range(numNodes).map(i => ({id: i}));
-            const links = [];
-            const linkSet = new Set();
-
-            for (let i = 0; i < numNodes; i++) {
-                for (let j = 1; j <= k / 2; j++) {
-                    const target = (i + j) % numNodes;
-                    const linkKey = i < target ? `${i}-${target}` : `${target}-${i}`;
-                    if (!linkSet.has(linkKey)) {
-                         links.push({ source: i, target: target });
-                         linkSet.add(linkKey);
-                    }
-                }
-            }
-
-            links.forEach(link => {
-                if (Math.random() < beta) {
-                    const oldTarget = link.target;
-                    let newTarget;
-                    let newLinkKey;
-
-                    do {
-                        newTarget = Math.floor(Math.random() * numNodes);
-                        newLinkKey = link.source < newTarget ? `${link.source}-${newTarget}` : `${newTarget}-${link.source}`;
-                    } while (newTarget === link.source || linkSet.has(newLinkKey));
-
-                    const oldLinkKey = link.source < oldTarget ? `${link.source}-${oldTarget}` : `${oldTarget}-${link.source}`;
-                    linkSet.delete(oldLinkKey);
-                    link.target = newTarget;
-                    linkSet.add(newLinkKey);
-                }
-            });
-            return { nodes, links };
-        }
-
-        // --- INFORMATION CASCADE LOGIC ---
-        function startCascade() {
-            resetCascade();
-            if (!currentGraphData.nodes || currentGraphData.nodes.length === 0) return;
-
-            const adjacency = new Map(currentGraphData.nodes.map(n => [n.id, []]));
-            currentGraphData.links.forEach(l => {
-                adjacency.get(l.source.id).push(l.target.id);
-                adjacency.get(l.target.id).push(l.source.id);
-            });
-
-            let queue = [];
-            const visited = new Set();
-
-            const startNodeId = Math.floor(Math.random() * currentGraphData.nodes.length);
-            queue.push(startNodeId);
-            visited.add(startNodeId);
-
-            d3.select(`circle[data-id='${startNodeId}']`)
-                .transition().duration(200)
-                .attr("fill", "#ffeb3b") // Starting node color
-                .attr("r", 8);
-
-            cascadeTimer = d3.interval(() => {
-                const levelSize = queue.length;
-                if (levelSize === 0) {
-                    cascadeTimer.stop();
-                    return;
-                }
-
-                let nextQueue = [];
-                for (let i = 0; i < levelSize; i++) {
-                    const u = queue[i];
-                    adjacency.get(u).forEach(v => {
-                        if (!visited.has(v)) {
-                            visited.add(v);
-                            nextQueue.push(v);
-                            d3.select(`circle[data-id='${v}']`)
-                                .transition().duration(300)
-                                .attr("fill", "#f44336"); // Spreading info color
-                        }
-                    });
-                }
-                queue = nextQueue;
-            }, 200);
-        }
-
-        function resetCascade() {
-            if (cascadeTimer) cascadeTimer.stop();
-            node.transition().duration(300)
-                .attr("fill", "#03a9f4")
-                .attr("r", 6);
-        }
-
-        // --- UPDATE AND RENDER FUNCTION ---
-        function updateNetwork() {
-            resetCascade();
-            const numNodes = +nodesSlider.value;
-            const k = +neighborsSlider.value;
-            const beta = +betaSlider.value;
-
-            currentGraphData = generateSmallWorldData(numNodes, k, beta);
-
-            node = node.data(currentGraphData.nodes, d => d.id)
-                .join(
-                    enter => enter.append("circle")
-                        .attr("r", 6)
-                        .attr("fill", "#03a9f4")
-                        .attr("stroke", "#121212")
-                        .attr("stroke-width", 1.5)
-                        .attr("data-id", d => d.id) // Add data-id for selection
-                        .call(drag(simulation)),
-                    update => update,
-                    exit => exit.remove()
-                );
-
-            link = link.data(currentGraphData.links, d => `${d.source.id}-${d.target.id}`)
-                .join(
-                    enter => enter.append("line")
-                        .attr("stroke-width", 1.5)
-                        .attr("stroke", "#444"),
-                    update => update,
-                    exit => exit.remove()
-                );
-
-            simulation.nodes(currentGraphData.nodes);
-            simulation.force("link").links(currentGraphData.links);
-            simulation.alpha(0.8).restart();
-        }
-
-        // --- D3 HELPERS (TICK, DRAG) ---
-        function ticked() {
-            link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-            node.attr("cx", d => d.x).attr("cy", d => d.y);
-        }
-
-        function drag(simulation) {
-            function dragstarted(event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x; d.fy = d.y;
-            }
-            function dragged(event, d) {
-                d.fx = event.x; d.fy = event.y;
-            }
-            function dragended(event, d) {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null; d.fy = null;
-            }
-            return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
-        }
-
-        // --- EVENT LISTENERS & INITIALIZATION ---
-        nodesSlider.oninput = () => {
-            document.getElementById('nodes-value').textContent = nodesSlider.value;
-            updateNetwork();
-        };
-        neighborsSlider.oninput = () => {
-            document.getElementById('neighbors-value').textContent = neighborsSlider.value;
-            updateNetwork();
-        };
-        betaSlider.oninput = () => {
-            document.getElementById('beta-value').textContent = betaSlider.value;
-            updateNetwork();
-        };
-        startButton.onclick = startCascade;
-        resetButton.onclick = resetCascade;
-
-        updateNetwork(); // Initial render
-    </script>
+    <script src="script.js"></script>
+    
 </body>
 </html>
