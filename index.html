@@ -1,4 +1,11 @@
+
 <!DOCTYPE html>
+<html lang="en" style="display: flex; flex-direction: row; justify-content: center; align-items: stretch;"></html>
+<html lang="en" style="display: flex; flex-direction: row; justify-content: center; align-items: stretch;"></html>
+<!--
+    Professional Research Center UI starter.
+    For fuller visual redesign, adjust fonts, spacing and color variables in the <head> styles.
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -356,6 +363,338 @@
         resetButton.onclick = resetCascade;
 
         updateNetwork(); // Initial render
+
+// Advanced controls, cascade engine, and monitoring panel injected dynamically
+(function () {
+    // Create advanced control panel
+    const controlsBar = document.querySelector('.controls');
+    const advPanel = document.createElement('div');
+    advPanel.className = 'controls';
+    advPanel.style.marginTop = '10px';
+    advPanel.style.flexWrap = 'wrap';
+    advPanel.style.justifyContent = 'center';
+    advPanel.style.gap = '12px';
+    advPanel.innerHTML = `
+        <div class="control-group">
+            <label for="adv-mode">Cascade Mode</label>
+            <select id="adv-mode">
+                <option value="prob">Probabilistic</option>
+                <option value="threshold">Threshold</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label for="adv-prob">Infection Prob (p)</label>
+            <input type="range" id="adv-prob" min="0" max="1" step="0.01" value="0.25">
+            <span id="adv-prob-value">0.25</span>
+        </div>
+        <div class="control-group">
+            <label for="adv-threshold">Threshold (fraction)</label>
+            <input type="range" id="adv-threshold" min="0" max="1" step="0.01" value="0.5">
+            <span id="adv-threshold-value">0.50</span>
+        </div>
+        <div class="control-group">
+            <label for="adv-seeds">Initial Seeds</label>
+            <input type="range" id="adv-seeds" min="1" max="20" step="1" value="1">
+            <span id="adv-seeds-value">1</span>
+        </div>
+        <div class="control-group">
+            <label for="adv-speed">Step ms (speed)</label>
+            <input type="range" id="adv-speed" min="50" max="2000" step="10" value="300">
+            <span id="adv-speed-value">300</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+            <button id="adv-start">Start Adv Cascade</button>
+            <button id="adv-pause">Pause</button>
+            <button id="adv-step">Step</button>
+            <button id="adv-reset">Reset</button>
+        </div>
+    `;
+    controlsBar.parentNode.insertBefore(advPanel, controlsBar.nextSibling);
+
+    // Metrics panel
+    const container = document.querySelector('.container');
+    const metrics = document.createElement('div');
+    metrics.style.marginTop = '12px';
+    metrics.style.padding = '10px 14px';
+    metrics.style.background = '#1e1e1e';
+    metrics.style.borderRadius = '10px';
+    metrics.style.color = '#aee';
+    metrics.style.minWidth = '320px';
+    metrics.innerHTML = `
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div>Step: <span id="m-step">0</span></div>
+            <div>Infected: <span id="m-infected">0</span></div>
+            <div>% Infected: <span id="m-percent">0%</span></div>
+            <div>Elapsed: <span id="m-elapsed">0s</span></div>
+            <div>Avg Degree: <span id="m-avgdeg">0</span></div>
+            <div>Clustering: <span id="m-clust">0</span></div>
+        </div>
+    `;
+    container.appendChild(metrics);
+
+    // Query controls (plain JS, no TypeScript casts)
+    const modeSelect = document.getElementById('adv-mode');
+    const probSlider = document.getElementById('adv-prob');
+    const probValue = document.getElementById('adv-prob-value');
+    const threshSlider = document.getElementById('adv-threshold');
+    const threshValue = document.getElementById('adv-threshold-value');
+    const seedsSlider = document.getElementById('adv-seeds');
+    const seedsValue = document.getElementById('adv-seeds-value');
+    const speedSlider = document.getElementById('adv-speed');
+    const speedValue = document.getElementById('adv-speed-value');
+
+    const startBtn = document.getElementById('adv-start');
+    const pauseBtn = document.getElementById('adv-pause');
+    const stepBtn = document.getElementById('adv-step');
+    const resetBtn = document.getElementById('adv-reset');
+
+    const metricsStep = document.getElementById('m-step');
+    const metricsInfected = document.getElementById('m-infected');
+    const metricsPercent = document.getElementById('m-percent');
+    const metricsElapsed = document.getElementById('m-elapsed');
+    const metricsAvgDeg = document.getElementById('m-avgdeg');
+    const metricsClust = document.getElementById('m-clust');
+
+    // State for advanced cascade (plain JS object)
+    let adv = {
+        status: new Map(), // nodeId -> 0 susceptible, 1 infected
+        step: 0,
+        startTime: null,
+        timer: null,
+        adjacency: new Map(),
+        running: false
+    };
+
+    // Helpers
+    function buildAdjacency() {
+        const adj = new Map();
+        if (!currentGraphData || !currentGraphData.nodes) return adj;
+        currentGraphData.nodes.forEach(n => adj.set(n.id, []));
+        currentGraphData.links.forEach(l => {
+            const a = typeof l.source === 'object' ? l.source.id : l.source;
+            const b = typeof l.target === 'object' ? l.target.id : l.target;
+            adj.get(a).push(b);
+            adj.get(b).push(a);
+        });
+        return adj;
+    }
+
+    function resetAdvState(clearVisual = true) {
+        if (adv.timer) { adv.timer.stop(); adv.timer = null; }
+        adv.status = new Map();
+        adv.step = 0;
+        adv.startTime = null;
+        adv.running = false;
+        adv.adjacency = buildAdjacency();
+        if (currentGraphData && currentGraphData.nodes) {
+            currentGraphData.nodes.forEach(n => adv.status.set(n.id, 0));
+        }
+        if (clearVisual) {
+            d3.selectAll("circle")
+                .transition().duration(200)
+                .attr("fill", "#03a9f4")
+                .attr("r", 6);
+        }
+        updateMetrics();
+    }
+
+    function seedInitialNodes(count) {
+        if (!currentGraphData || !currentGraphData.nodes) return;
+        const ids = currentGraphData.nodes.map(n => n.id);
+        const picked = new Set();
+        while (picked.size < Math.min(count, ids.length)) {
+            const s = ids[Math.floor(Math.random() * ids.length)];
+            picked.add(s);
+        }
+        picked.forEach(id => {
+            adv.status.set(id, 1);
+            d3.select(`circle[data-id='${id}']`)
+                .transition().duration(150)
+                .attr("fill", "#ffeb3b")
+                .attr("r", 8);
+        });
+    }
+
+    function stepCascadeOnce() {
+        if (!currentGraphData || !currentGraphData.nodes) return;
+        const mode = modeSelect ? modeSelect.value : 'prob';
+        const p = probSlider ? parseFloat(probSlider.value) : 0.25;
+        const thresh = threshSlider ? parseFloat(threshSlider.value) : 0.5;
+
+        const newlyInfected = [];
+
+        if (mode === 'prob') {
+            // For each infected node, attempt to infect neighbors with prob p
+            adv.status.forEach((st, id) => {
+                if (st === 1) {
+                    const neighbors = adv.adjacency.get(id) || [];
+                    neighbors.forEach(nb => {
+                        if (adv.status.get(nb) === 0) {
+                            if (Math.random() < p) newlyInfected.push(nb);
+                        }
+                    });
+                }
+            });
+        } else {
+            // Threshold model: susceptible becomes infected if fraction infected neighbors >= thresh
+            adv.status.forEach((st, id) => {
+                if (st === 0) {
+                    const neighbors = adv.adjacency.get(id) || [];
+                    if (neighbors.length === 0) return;
+                    const infectedNeighbors = neighbors.reduce((acc, nb) => acc + (adv.status.get(nb) === 1 ? 1 : 0), 0);
+                    if ((infectedNeighbors / neighbors.length) >= thresh) newlyInfected.push(id);
+                }
+            });
+        }
+
+        // Apply new infections
+        const uniqueNew = Array.from(new Set(newlyInfected));
+        uniqueNew.forEach(id => adv.status.set(id, 1));
+
+        // Visual update
+        uniqueNew.forEach(id => {
+            d3.select(`circle[data-id='${id}']`)
+                .transition().duration(200)
+                .attr("fill", "#f44336")
+                .attr("r", 7);
+        });
+
+        adv.step += 1;
+        updateMetrics();
+
+        // stop if no changes
+        const susceptibleLeft = Array.from(adv.status.values()).some(v => v === 0);
+        if (uniqueNew.length === 0 || !susceptibleLeft) {
+            stopAdvTimer();
+        }
+    }
+
+    function startAdvTimer() {
+        stopAdvTimer();
+        const ms = speedSlider ? +speedSlider.value : 300;
+        adv.startTime = adv.startTime || Date.now();
+        adv.running = true;
+        adv.timer = d3.interval(() => {
+            stepCascadeOnce();
+        }, ms);
+    }
+
+    function stopAdvTimer() {
+        if (adv.timer) {
+            adv.timer.stop();
+            adv.timer = null;
+        }
+        adv.running = false;
+    }
+
+    function updateMetrics() {
+        const total = (currentGraphData && currentGraphData.nodes) ? currentGraphData.nodes.length : 0;
+        const infected = Array.from(adv.status.values()).filter(v => v === 1).length;
+        const percent = total === 0 ? 0 : Math.round((infected / total) * 100);
+        if (metricsStep) metricsStep.textContent = String(adv.step);
+        if (metricsInfected) metricsInfected.textContent = String(infected);
+        if (metricsPercent) metricsPercent.textContent = `${percent}%`;
+        if (metricsElapsed) metricsElapsed.textContent = adv.startTime ? `${Math.round((Date.now() - adv.startTime) / 1000)}s` : '0s';
+
+        // Average degree
+        let sumDeg = 0;
+        adv.adjacency.forEach(nebs => sumDeg += nebs.length);
+        const avgDeg = adv.adjacency.size === 0 ? 0 : (sumDeg / adv.adjacency.size);
+        if (metricsAvgDeg) metricsAvgDeg.textContent = avgDeg.toFixed(2);
+
+        // Clustering coefficient (avg local clustering, approximate)
+        let clustSum = 0;
+        adv.adjacency.forEach((nebs, id) => {
+            if (nebs.length < 2) return;
+            let links = 0;
+            for (let i = 0; i < nebs.length; i++) {
+                for (let j = i + 1; j < nebs.length; j++) {
+                    const a = nebs[i], b = nebs[j];
+                    // check if edge exists between a and b
+                    const nbList = adv.adjacency.get(a) || [];
+                    if (nbList.includes(b)) links++;
+                }
+            }
+            const possible = (nebs.length * (nebs.length - 1)) / 2;
+            clustSum += (links / possible);
+        });
+        const clustAvg = adv.adjacency.size === 0 ? 0 : (clustSum / adv.adjacency.size);
+        if (metricsClust) metricsClust.textContent = clustAvg.toFixed(3);
+    }
+
+    // UI bindings
+    if (probSlider && probValue) probSlider.oninput = () => { probValue.textContent = probSlider.value; };
+    if (threshSlider && threshValue) threshSlider.oninput = () => { threshValue.textContent = parseFloat(threshSlider.value).toFixed(2); };
+    if (seedsSlider && seedsValue) seedsSlider.oninput = () => { seedsValue.textContent = seedsSlider.value; };
+    if (speedSlider && speedValue) speedSlider.oninput = () => { speedValue.textContent = speedSlider.value; };
+
+    if (startBtn) startBtn.onclick = () => {
+        // reset any simple cascade timers from existing logic
+        if (cascadeTimer) { cascadeTimer.stop(); cascadeTimer = null; }
+
+        resetAdvState(false); // preserve visuals? false to clear
+        adv.adjacency = buildAdjacency();
+
+        // seed
+        seedInitialNodes(parseInt((seedsSlider && seedsSlider.value) || '1', 10));
+        updateMetrics();
+
+        // start advancing
+        startAdvTimer();
+    };
+
+    if (pauseBtn) pauseBtn.onclick = () => {
+        if (adv.running) {
+            stopAdvTimer();
+            pauseBtn.textContent = 'Resume';
+        } else {
+            if (adv.timer == null) startAdvTimer();
+            pauseBtn.textContent = 'Pause';
+        }
+    };
+
+    if (stepBtn) stepBtn.onclick = () => {
+        // single step without changing timer
+        if (!adv.adjacency || adv.adjacency.size === 0) {
+            adv.adjacency = buildAdjacency();
+            // if no seed present, add one
+            if (Array.from(adv.status.values()).every(v => v === 0)) seedInitialNodes(parseInt((seedsSlider && seedsSlider.value) || '1', 10));
+        }
+        stepCascadeOnce();
+    };
+
+    if (resetBtn) resetBtn.onclick = () => {
+        stopAdvTimer();
+        resetAdvState(true);
+        if (pauseBtn) pauseBtn.textContent = 'Pause';
+    };
+
+    // Recompute adjacency & metrics whenever network changes
+    // Hook into existing updateNetwork by observing currentGraphData changes periodically.
+    // (Safer than modifying original function)
+    let lastNodesVersion = null;
+    d3.interval(() => {
+        const curCount = currentGraphData && currentGraphData.nodes ? currentGraphData.nodes.length : 0;
+        if (lastNodesVersion !== curCount) {
+            lastNodesVersion = curCount;
+            // rebuild adjacency and reset advanced state visually
+            resetAdvState(true);
+        }
+    }, 800);
+
+    // expose a lightweight API for debugging from console
+    window.advCascade = {
+        reset: resetAdvState,
+        step: stepCascadeOnce,
+        start: startAdvTimer,
+        stop: stopAdvTimer,
+        state: () => adv
+    };
+
+    // initialize
+    resetAdvState(true);
+})();
+
     </script>
 </body>
 </html>
